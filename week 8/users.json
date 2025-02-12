@@ -1,0 +1,38 @@
+[
+    {
+        "name": "mazen",
+        "email": "mazen@gmail.com",
+        "password": "81dc9bdb52d04dc20036dbd8313ed055",
+        "photo": "C:\\xampp\\tmp\\phpDC7F.tmp"
+    },
+    {
+        "name": "mazena",
+        "email": "mazena@gmail.com",
+        "password": "81dc9bdb52d04dc20036dbd8313ed055",
+        "photo": "C:\\xampp\\tmp\\php4C73.tmp"
+    },
+    {
+        "name": "x",
+        "email": "x@gmail.com",
+        "password": "81dc9bdb52d04dc20036dbd8313ed055",
+        "photo": "uploads\/1710422113629.jpg"
+    },
+    {
+        "name": "xx",
+        "email": "xx@gmail.com",
+        "password": "81dc9bdb52d04dc20036dbd8313ed055",
+        "photo": "uploads1710422113629.jpg"
+    },
+    {
+        "name": "xxz",
+        "email": "xxz@gmail.com",
+        "password": "81dc9bdb52d04dc20036dbd8313ed055",
+        "photo": "uploads\/1710422113629.jpg"
+    },
+    {
+        "name": "xxz",
+        "email": "xxa@gmail.com",
+        "password": "202cb962ac59075b964b07152d234b70",
+        "photo": "uploads\/1710422113629.jpg"
+    }
+]

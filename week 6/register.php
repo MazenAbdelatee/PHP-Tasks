@@ -1,28 +1,57 @@
 <?php
-    if(isset($_POST["name"])!=null && isset($_POST["password"])!=null && isset($_POST["email"])!=null && isset($_POST["phone"])!=null){
-        $data=[
-            "name" => $_POST["name"],
-            "password"=> $_POST["password"],
-            "email"=>$_POST['email'],
-            "phone"=>$_POST['phone']
-        ];
-        $data=json_encode($data,JSON_PRETTY_PRINT);
-        if(file_exists("user.json")){
-            $users=[file_get_contents("user.json")];
-            if(empty($users)){
-                file_put_contents("user.json",$data);
-                header("Location:login.php");
-                die();
+    $err=[];
+    $user=[];
+    //name validation
+    if(isset($_POST['name'])){
+        $user['name']= ucwords($_POST['name']);
+    }else{
+        $err['name']="Name is required";
+    }
+    //password validation
+    if(isset($_POST['password'])){
+        if(strlen($_POST['password'])<6){
+            $err['password']="Password must be 6 characters long";
+        }else{  
+            $user['password']=password_hash($_POST['password']);
+        }
+    }
+    //email validation
+    if(isset($_POST['email'])){
+        if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)){
+            $err['email']="Email is not valid";
+        }else{
+            $user['email']=$_POST['email'];
+        }
+    }
+    //phone validation
+    if(isset($_POST['phone'])){
+        if(strlen($_POST['phone'])<10){
+            $err['phone']="Phone number is not valid";
+        }else{
+            $user['phone']=$_POST['phone'];
+        }
+    }
+    //store data in json format
+    if(file_exists('user.json')){
+        $data=file_get_contents('user.json',true);
+        $data=json_decode($data,true);
+        if(empty($user)){
+            $data=[$user];
+        }else{
+            //check if user already exists
+            $existingUser=array_filter($data,function($data)use($user){
+                return $data==$user;
+            });
+            if($existingUser){
+                $err['user']="User already exists";
             }else{
-                $users = json_decode(file_get_contents("user.json"), true);
-                array_push($users, json_decode($data, true));
-                $users = json_encode($users, JSON_PRETTY_PRINT);
-                file_put_contents("user.json", $users);
-                header("Location:login.php");
-                exit();
+                $data[]=$user;
             }
         }
-    }   
+    }
+    file_put_contents('user.json',json_encode($data));
+    header('location:login.php');
+    die();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +65,7 @@
     <nav>
         <ul>
             <li style="margin-right: auto;"><a href="home.php">Home</a></li>
-            <li><a href="signup.php">SignUp</a></li>
+            <li><a href="signup.php">Register</a></li>
             <li><a href="login.php">LoginIN</a></li>
             <li><a href="logout.php">LogOut</a></li>
         </ul>
@@ -63,6 +92,15 @@
                 <button type="submit" >Sign Up</button>
             </div>
         </form>
+        <div class="error">
+            <?php if (!empty($err)):?>
+                <ul>
+                    <?php foreach($err as $error):?>
+                        <li><?php echo $error;?></li>
+                    <?php endforeach;?>
+                </ul>
+            <?php endif ; ?>
+        </div>
     </div>
 </body>
 </html>

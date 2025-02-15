@@ -1,57 +1,62 @@
 <?php
     $err=[];
     $user=[];
-    //name validation
-    if(isset($_POST['name'])){
-        $user['name']= ucwords($_POST['name']);
-    }else{
-        $err['name']="Name is required";
-    }
-    //password validation
-    if(isset($_POST['password'])){
-        if(strlen($_POST['password'])<6){
-            $err['password']="Password must be 6 characters long";
-        }else{  
-            $user['password']=password_hash($_POST['password']);
-        }
-    }
-    //email validation
-    if(isset($_POST['email'])){
-        if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)){
-            $err['email']="Email is not valid";
+    
+    if($_SERVER['REQUEST_METHOD']=='POST'){
+        if(!empty($_POST['name'])){
+            $user['name']= ucwords($_POST['name']);
         }else{
-            $user['email']=$_POST['email'];
+            $err['name']="Name is required";
         }
-    }
-    //phone validation
-    if(isset($_POST['phone'])){
-        if(strlen($_POST['phone'])<10){
-            $err['phone']="Phone number is not valid";
-        }else{
-            $user['phone']=$_POST['phone'];
-        }
-    }
-    //store data in json format
-    if(file_exists('user.json')){
-        $data=file_get_contents('user.json',true);
-        $data=json_decode($data,true);
-        if(empty($user)){
-            $data=[$user];
-        }else{
-            //check if user already exists
-            $existingUser=array_filter($data,function($data)use($user){
-                return $data==$user;
-            });
-            if($existingUser){
-                $err['user']="User already exists";
-            }else{
-                $data[]=$user;
+        
+        
+        if(!empty($_POST['password'])){
+            if(strlen($_POST['password'])<6){
+                $err['password']="Password must be 6 characters long";
+            }else{  
+                $user['password']=md5($_POST['password']);
             }
         }
+        
+        if(!empty($_POST['email'])){
+            if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)){
+                $err['email']="Email is not valid";
+            }else{
+                $user['email']=$_POST['email'];
+            }
+        }
+        
+        if(!empty($_POST['phone'])){
+            if(strlen($_POST['phone'])<10){
+                $err['phone']="Phone number is not valid";
+            }else{
+                $user['phone']=$_POST['phone'];
+            }
+        }
+        
+        if(empty($err)){
+            $data=[];
+            if(file_exists('user.json')){
+                $content=file_get_contents('user.json',true);
+                $data=json_decode($content,true)??[];
+            }    
+            if(!is_array($data)){
+                $data=[];
+            }
+            $existUser=array_filter($data,function($val) use($user){
+                return $val['email']==$user['email'];
+            });
+            if($existUser){
+                $err['email']="Email already exist";
+            }else{
+                $data[]=$user;
+                file_put_contents('user.json',json_encode($data,JSON_PRETTY_PRINT));  
+                header('Location:login.php');
+                die();
+            }
+        }
+
     }
-    file_put_contents('user.json',json_encode($data));
-    header('location:login.php');
-    die();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,16 +96,16 @@
             <div>
                 <button type="submit" >Sign Up</button>
             </div>
+            <div class="error">
+                <?php if (!empty($err)):?>
+                    <ul>
+                        <?php foreach($err as $error):?>
+                            <li><?php echo $error;?></li>
+                        <?php endforeach;?>
+                    </ul>
+                <?php endif ; ?>
+            </div>
         </form>
-        <div class="error">
-            <?php if (!empty($err)):?>
-                <ul>
-                    <?php foreach($err as $error):?>
-                        <li><?php echo $error;?></li>
-                    <?php endforeach;?>
-                </ul>
-            <?php endif ; ?>
-        </div>
     </div>
 </body>
 </html>

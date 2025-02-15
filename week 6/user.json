@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Mazen",
+        "password": "$2y$10$lPpubFoSm9ojIlXbfUqudeQXyflta3cM.KB5iQchIn\/qdhrvHamLC",
+        "email": "mazen@g.com",
+        "phone": "467845663456"
+    },
+    {
+        "name": "Hamada",
+        "password": "$2y$10$DBJLLeVIXItFgjzOumj2SeHIV9.a2u7Fs668WhRlLALIgubQ2NLWK",
+        "email": "hamda@m.com",
+        "phone": "04539295780432"
+    }
+]
